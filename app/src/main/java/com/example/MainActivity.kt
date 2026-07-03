@@ -5,12 +5,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.compose.*
@@ -43,11 +49,26 @@ fun MainApp() {
     Scaffold(
         bottomBar = {
             if (showBottomNav) {
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.8f)
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.65f)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = Color.White.copy(alpha = 0.3f),
+                            shape = RoundedCornerShape(24.dp)
+                        )
                 ) {
-                    NavigationBarItem(
-                        selected = currentRoute == "dashboard",
+                    NavigationBar(
+                        containerColor = Color.Transparent,
+                        tonalElevation = 0.dp,
+                        windowInsets = WindowInsets(0, 0, 0, 0)
+                    ) {
+                        NavigationBarItem(
+                            selected = currentRoute == "dashboard",
                         onClick = {
                             navController.navigate("dashboard") {
                                 popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -107,13 +128,14 @@ fun MainApp() {
                         label = { Text("الملف") }
                     )
                 }
+                } // Close Box
             }
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = "onboarding",
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
         ) {
             composable("onboarding") {
                 OnboardingScreen(onNavigateToLogin = { navController.navigate("login") { popUpTo("onboarding") { inclusive = true } } })
